@@ -346,6 +346,8 @@ mark.diff-style { background: #e8f0fb; color: var(--blue); border-radius: 2px; p
 <div id="notif"></div>
 
 <script>
+(function() {
+
 // ════════════════════════════════
 // CONFIGURATION DES LANGUES
 // ════════════════════════════════
@@ -1710,11 +1712,6 @@ function closeExportModal(){document.getElementById('export-modal').classList.re
 
 // Exposer toutes les fonctions sur window pour Safari
 window.loadFile = loadFile;
-// Safari : attacher directement l'événement sur l'input
-document.addEventListener('DOMContentLoaded', function() {
-  var fi = document.getElementById('file-input');
-  if(fi) fi.addEventListener('change', function(e) { loadFile(e); });
-});
 window.clearInput = clearInput;
 window.updateCount = updateCount;
 window.lancerAction = lancerAction;
@@ -1730,6 +1727,28 @@ window.selectSourceLang = selectSourceLang;
 window.toggleTargetLang = toggleTargetLang;
 window.toggleKey = toggleKey;
 window.corrigerTraduction = corrigerTraduction;
+
+// Exposer sur window
+var fns = [
+  'loadFile','clearInput','updateCount','lancerAction','switchTab',
+  'toggleDiff','openExportModal','closeExportModal','exportDocx',
+  'exportTxt','exportHtml','setMode','selectSourceLang','toggleTargetLang',
+  'toggleKey','corrigerTraduction','renderPanel','createResultTab',
+  'createResultPanel','notify','showProgress','hideProgress',
+  'lancerCorrection','lancerTraduction','toggleDiff','renderTypoRules',
+  'buildCorrectPrompt','buildTranslatePrompt','callClaude','splitChunks',
+  'normaliserEspacesFR','parseDiffToRuns','parseTextToRuns',
+  'collectHtmlBlocks','extractFootnotesFromText','exportDocx',
+  'corrigerTraductionAuto','buildCorrectAutoPrompt','sleep',
+  'loadJSZip','odtToHtml','htmlToMarkedText','markersToHtml',
+  'escapeHtml','extractDocxFootnotes','extractDocxRunText',
+  'ensureMammoth','openExportModal','addExportBtn','splitTextBlocks',
+  'getTypoRulesText','renderTypoRules','syncTargetGrid','selectLang'
+];
+fns.forEach(function(name) {
+  try { if(typeof eval(name) !== 'undefined') window[name] = eval(name); } catch(e) {}
+});
+})();
 </script>
 </body>
 </html>
