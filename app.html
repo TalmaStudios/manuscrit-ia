@@ -346,12 +346,10 @@ mark.diff-style { background: #e8f0fb; color: var(--blue); border-radius: 2px; p
 <div id="notif"></div>
 
 <script>
-(function() {
-
 // ════════════════════════════════
 // CONFIGURATION DES LANGUES
 // ════════════════════════════════
-const LANGS = {
+window.LANGS =  = {
   fr: { label: '🇫🇷 Français', name: 'français', nameEn: 'French',
     rules: [
       { id:'guillemets', label:'Guillemets', type:'select', options:[{value:'francais',label:'« … »'},{value:'anglais',label:'" … "'}]},
@@ -435,13 +433,13 @@ const LANGS = {
 // ════════════════════════════════
 // ÉTAT GLOBAL
 // ════════════════════════════════
-let currentMode = 'correct';
-let sourceLang = 'fr';
-let targetLangs = [];
-let results = {}; // { panelId: { type:'correct'|'translate', lang, clean, diff, diffMode, stats, footnotes } }
-let originalText = '';
-let richInputHtml = ''; // HTML enrichi conservant gras/italique du fichier source
-let inputFootnotes = {}; // { 1: "texte de la note", 2: "..." } — notes de bas de page du fichier source
+window.currentMode =  = 'correct';
+window.sourceLang =  = 'fr';
+window.targetLangs =  = [];
+window.results =  = {}; // { panelId: { type:'correct'|'translate', lang, clean, diff, diffMode, stats, footnotes } }
+window.originalText =  = '';
+window.richInputHtml =  = ''; // HTML enrichi conservant gras/italique du fichier source
+window.inputFootnotes =  = {}; // { 1: "texte de la note", 2: "..." } — notes de bas de page du fichier source
 
 // ════════════════════════════════
 // INIT
@@ -454,7 +452,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ════════════════════════════════
 // MODE
 // ════════════════════════════════
-function setMode(mode) {
+window.setMode = function(mode) {
   currentMode = mode;
   document.getElementById('modeBtn-correct').classList.toggle('active', mode==='correct');
   document.getElementById('modeBtn-translate').classList.toggle('active', mode==='translate');
@@ -468,7 +466,7 @@ function setMode(mode) {
 // ════════════════════════════════
 // LANGUE SOURCE
 // ════════════════════════════════
-function selectSourceLang(btn) {
+window.selectSourceLang = function(btn) {
   document.querySelectorAll('#source-lang-grid .lang-btn').forEach(b=>b.classList.remove('selected'));
   btn.classList.add('selected');
   sourceLang = btn.dataset.lang;
@@ -477,7 +475,7 @@ function selectSourceLang(btn) {
   notify(`Langue source : ${LANGS[sourceLang].label}`, 'info', 1800);
 }
 
-function syncTargetGrid() {
+window.syncTargetGrid = function() {
   // Désactiver la langue source dans les cibles
   document.querySelectorAll('#target-lang-grid .lang-btn').forEach(b => {
     if (b.dataset.lang === sourceLang) {
@@ -492,7 +490,7 @@ function syncTargetGrid() {
 // ════════════════════════════════
 // LANGUE CIBLE (multiselect)
 // ════════════════════════════════
-function toggleTargetLang(btn) {
+window.toggleTargetLang = function(btn) {
   if (btn.disabled) return;
   const lang = btn.dataset.lang;
   if (btn.classList.contains('target-selected')) {
@@ -507,7 +505,7 @@ function toggleTargetLang(btn) {
 // ════════════════════════════════
 // RÈGLES TYPO
 // ════════════════════════════════
-function renderTypoRules(lang) {
+window.renderTypoRules = function(lang) {
   const rules = LANGS[lang].rules;
   const container = document.getElementById('typo-rules-content');
   container.innerHTML = '';
@@ -533,7 +531,7 @@ function renderTypoRules(lang) {
   });
 }
 
-function getTypoRulesText(lang) {
+window.getTypoRulesText = function(lang) {
   const rules = LANGS[lang].rules;
   let txt = '';
   rules.forEach(rule => {
@@ -548,31 +546,31 @@ function getTypoRulesText(lang) {
 // ════════════════════════════════
 // UI UTILS
 // ════════════════════════════════
-function notify(msg, type='info', duration=4000) {
+window.notify = function(msg, type='info', duration=4000) {
   const el=document.createElement('div'); el.className=`notif-item ${type}`; el.textContent=msg;
   document.getElementById('notif').appendChild(el); setTimeout(()=>el.remove(),duration);
 }
-function showProgress(title,msg,chunk='') {
+window.showProgress = function(title,msg,chunk='') {
   document.getElementById('progress-overlay').classList.add('show');
   document.getElementById('progress-title').textContent=title;
   document.getElementById('progress-msg').textContent=msg;
   document.getElementById('chunk-info').textContent=chunk;
 }
-function hideProgress() { document.getElementById('progress-overlay').classList.remove('show'); }
+window.hideProgress = function() { document.getElementById('progress-overlay').classList.remove('show'); }
 
-function updateCount() {
+window.updateCount = function() {
   const txt=document.getElementById('manuscript-input').value;
   document.getElementById('char-count').textContent=txt.length.toLocaleString('fr');
   document.getElementById('word-count').textContent=txt.trim()?txt.trim().split(/\s+/).length.toLocaleString('fr'):0;
 }
-function clearInput() {
+window.clearInput = function() {
   document.getElementById('manuscript-input').value='';
   richInputHtml='';
   inputFootnotes={};
   updateCount();
 }
 
-function loadFile(e) {
+window.loadFile = function(e) {
   const f=e.target.files[0]; if(!f) return;
   const ext=f.name.split('.').pop().toLowerCase();
 
@@ -642,7 +640,7 @@ function loadFile(e) {
 }
 
 // Extraire les footnotes d'un .docx en dézippant le XML
-async function extractDocxFootnotes(arrayBuffer) {
+window.extractDocxFootnotes = async function(arrayBuffer) {
   const footnotes={};
   try {
     await loadJSZip();
@@ -665,7 +663,7 @@ async function extractDocxFootnotes(arrayBuffer) {
 }
 
 // Extraire le texte d'un nœud XML Word avec marqueurs **gras** *italique*
-function extractDocxRunText(node) {
+window.extractDocxRunText = function(node) {
   let result='';
   node.querySelectorAll('w\\:r').forEach(run=>{
     const rPr=run.querySelector('w\\:rPr');
@@ -684,7 +682,7 @@ function extractDocxRunText(node) {
 }
 
 // Convertit le HTML enrichi en texte avec marqueurs **gras**, *italique* et [FN:N]
-function htmlToMarkedText(html, footnotes={}) {
+window.htmlToMarkedText = function(html, footnotes={}) {
   const div=document.createElement('div');
   div.innerHTML=html;
   function walk(node) {
@@ -709,7 +707,7 @@ function htmlToMarkedText(html, footnotes={}) {
 }
 
 // Convertit content.xml ODF en HTML + extrait les footnotes
-function odtToHtml(contentXml, stylesXml) {
+window.odtToHtml = function(contentXml, stylesXml) {
   const parser=new DOMParser();
   const xmlDoc=parser.parseFromString(contentXml,'text/xml');
   const footnotes={};
@@ -790,7 +788,7 @@ function odtToHtml(contentXml, stylesXml) {
 }
 
 // Chargement à la demande de JSZip pour les .odt
-function loadJSZip() {
+window.loadJSZip = function() {
   return new Promise((resolve,reject)=>{
     if(typeof JSZip!=='undefined'){resolve();return;}
     const s=document.createElement('script');
@@ -799,13 +797,13 @@ function loadJSZip() {
     document.head.appendChild(s);
   });
 }
-function toggleKey() { const i=document.getElementById('api-key'); i.type=i.type==='password'?'text':'password'; }
-function escapeHtml(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+window.toggleKey = function() { const i=document.getElementById('api-key'); i.type=i.type==='password'?'text':'password'; }
+window.escapeHtml = function(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 // ════════════════════════════════
 // ONGLETS
 // ════════════════════════════════
-function switchTab(tabEl) {
+window.switchTab = function(tabEl) {
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   tabEl.classList.add('active');
@@ -814,7 +812,7 @@ function switchTab(tabEl) {
   if (panel) panel.classList.add('active');
 }
 
-function createResultTab(panelId, label, isTranslation=false) {
+window.createResultTab = function(panelId, label, isTranslation=false) {
   const tabsBar = document.getElementById('tabs-bar');
   // Supprimer onglet existant si même id
   const existing = tabsBar.querySelector(`[data-panel="${panelId}"]`);
@@ -829,7 +827,7 @@ function createResultTab(panelId, label, isTranslation=false) {
   return tab;
 }
 
-function createResultPanel(panelId, isTranslation=false) {
+window.createResultPanel = function(panelId, isTranslation=false) {
   const main = document.querySelector('main');
   let panel = document.getElementById(panelId);
   if (panel) panel.remove();
@@ -859,7 +857,7 @@ function createResultPanel(panelId, isTranslation=false) {
   return panel;
 }
 
-function renderPanel(panelId) {
+window.renderPanel = function(panelId) {
   const r = results[panelId]; if(!r) return;
   const el = document.getElementById(`content-${panelId}`);
   if (!el) return;
@@ -874,7 +872,7 @@ function renderPanel(panelId) {
 
 // Convertit les marqueurs **gras**, *italique*, ***gras+italique*** en balises HTML
 // et les sauts de ligne en <br> pour l'affichage
-function markersToHtml(text) {
+window.markersToHtml = function(text) {
   // Échapper d'abord le HTML sauf les marqueurs
   let t = escapeHtml(text);
   // Convertir les marqueurs (après échappement, * n'est pas altéré)
@@ -886,7 +884,7 @@ function markersToHtml(text) {
   return t;
 }
 
-function toggleDiff(panelId) {
+window.toggleDiff = function(panelId) {
   const r = results[panelId]; if(!r) return;
   r.diffMode = !r.diffMode;
   renderPanel(panelId);
@@ -896,7 +894,7 @@ function toggleDiff(panelId) {
 // ════════════════════════════════
 // CHUNKS
 // ════════════════════════════════
-function splitChunks(text, max=1800) {
+window.splitChunks = function(text, max=1800) {
   // Découpage d'abord par double saut de ligne (paragraphes)
   const paras = text.split(/\n\n+/);
   const chunks=[]; let cur='';
@@ -925,7 +923,7 @@ function splitChunks(text, max=1800) {
 // ════════════════════════════════
 // APPEL API (avec retry)
 // ════════════════════════════════
-async function callClaude(text, systemPrompt, attempt=1) {
+window.callClaude = async function(text, systemPrompt, attempt=1) {
   const apiKey = document.getElementById('api-key').value.trim();
   if(!apiKey) throw new Error('Clé API manquante. Veuillez la saisir dans le panneau gauche.');
 
@@ -1012,12 +1010,12 @@ async function callClaude(text, systemPrompt, attempt=1) {
   }
 }
 
-function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+window.sleep = function(ms){ return new Promise(r=>setTimeout(r,ms)); }
 
 // ════════════════════════════════
 // PROMPT CORRECTION
 // ════════════════════════════════
-function buildCorrectPrompt(lang) {
+window.buildCorrectPrompt = function(lang) {
   const style=document.getElementById('rule-style').value;
   const custom=document.getElementById('rule-custom').value.trim();
   const optOrtho=document.getElementById('opt-ortho').checked;
@@ -1053,7 +1051,7 @@ CRITICAL:
 // ════════════════════════════════
 // PROMPT TRADUCTION
 // ════════════════════════════════
-function buildTranslatePrompt(sourceLangCode, targetLangCode) {
+window.buildTranslatePrompt = function(sourceLangCode, targetLangCode) {
   const tone=document.getElementById('transl-tone').value;
   const genre=document.getElementById('transl-genre').value;
   const notes=document.getElementById('transl-notes').checked;
@@ -1085,7 +1083,7 @@ CRITICAL:
 // ════════════════════════════════
 // LANCER ACTION
 // ════════════════════════════════
-async function lancerAction() {
+window.lancerAction = async function() {
   if (currentMode==='correct') await lancerCorrection();
   else await lancerTraduction();
 }
@@ -1098,13 +1096,13 @@ async function lancerAction() {
 // Espace fine insécable (U+202F) — devant : ; ! ? % et à l'intérieur des guillemets « »
 // Espace insécable (U+00A0)       — cas particuliers
 // Apostrophe typographique (U+2019) — remplace l'apostrophe droite
-const NNBSP = '\u202F'; // espace fine insécable
-const NBSP  = '\u00A0'; // espace insécable
-const APOS  = '\u2019'; // apostrophe typographique '
+window.NNBSP =  = '\u202F'; // espace fine insécable
+window.NBSP =   = '\u00A0'; // espace insécable
+window.APOS =   = '\u2019'; // apostrophe typographique '
 
 // Locutions françaises composées de tirets — formes correctes
 // Clé : regex de la forme incorrecte, Valeur : forme correcte
-const LOCUTIONS_TIRETS = [
+window.LOCUTIONS_TIRETS =  = [
   // c'est-à-dire et variantes (apostrophe droite ou manquante, tirets manquants)
   [/c[''\u2019]?[ ]?est[ -]?à[ -]?dire/gi,        `c${APOS}est-à-dire`],
   [/c\s+est\s+a\s+dire/gi,                          `c${APOS}est-à-dire`],
@@ -1143,7 +1141,7 @@ const LOCUTIONS_TIRETS = [
 ];
 
 // Mots avec ligature œ — liste fermée et sans ambiguïté
-const OE_LIGATURES = [
+window.OE_LIGATURES =  = [
   [/\bcoeur\b/gi, 'cœur'], [/\bcoeurs\b/gi, 'cœurs'],
   [/\bsoeur\b/gi, 'sœur'], [/\bsoeurs\b/gi, 'sœurs'],
   [/\boeuvre\b/gi, 'œuvre'], [/\boeuvres\b/gi, 'œuvres'],
@@ -1165,7 +1163,7 @@ const OE_LIGATURES = [
 
 // Majuscules françaises sans accent → avec accent
 // Liste étendue des mots courants dans un manuscrit français
-const MAJUSCULES_ACCENT = [
+window.MAJUSCULES_ACCENT =  = [
 
   // ── É (le cas le plus fréquent) ──
   [/\bEcart\b/g,'Écart'],[/\bEcarts\b/g,'Écarts'],
@@ -1252,7 +1250,7 @@ const MAJUSCULES_ACCENT = [
 ];
 
 
-function normaliserEspacesFR(text) {
+window.normaliserEspacesFR = function(text) {
   let t = text;
 
   // 0. Apostrophes droites → apostrophes typographiques
@@ -1300,7 +1298,7 @@ function normaliserEspacesFR(text) {
 }
 
 // Génère un diff HTML lisible entre texte avant/après normalisation
-function diffNormalisation(avant, apres) {
+window.diffNormalisation = function(avant, apres) {
   // Comparaison caractère par caractère sur les zones modifiées
   // Pour l'affichage on remplace les espaces fines par un symbole visible ·
   const afficher = s => s
@@ -1323,7 +1321,7 @@ function diffNormalisation(avant, apres) {
   return html;
 }
 
-async function lancerCorrection() {
+window.lancerCorrection = async function() {
   const text=document.getElementById('manuscript-input').value.trim();
   if(!text){notify('Le manuscrit est vide.','error');return;}
   if(!document.getElementById('api-key').value.trim()){notify('Clé API manquante.','error');return;}
@@ -1377,7 +1375,7 @@ async function lancerCorrection() {
 }
 
 // ── Traduction ──
-async function lancerTraduction() {
+window.lancerTraduction = async function() {
   const text=document.getElementById('manuscript-input').value.trim();
   if(!text){notify('Le manuscrit est vide.','error');return;}
   if(!document.getElementById('api-key').value.trim()){notify('Clé API manquante.','error');return;}
@@ -1420,14 +1418,14 @@ async function lancerTraduction() {
 }
 
 // ── Correction d'une traduction (bouton dans le panel) ──
-async function corrigerTraduction(panelId) {
+window.corrigerTraduction = async function(panelId) {
   const r=results[panelId]; if(!r||r.type!=='translate'){return;}
   const text=r.clean;
   if(!text){notify('Aucun texte traduit à corriger.','error');return;}
   await corrigerTraductionAuto(panelId,r.lang,text);
 }
 
-async function corrigerTraductionAuto(panelId,lang,text) {
+window.corrigerTraductionAuto = async function(panelId,lang,text) {
   const chunks=splitChunks(text);
   let allDiff='',allClean='',tot={ortho:0,typo:0,style:0};
   try {
@@ -1457,7 +1455,7 @@ async function corrigerTraductionAuto(panelId,lang,text) {
   } catch(err){hideProgress();notify(err.message,'error',6000);}
 }
 
-function buildCorrectAutoPrompt(lang) {
+window.buildCorrectAutoPrompt = function(lang) {
   return `You are a professional editorial proofreader for ${LANGS[lang].name}.
 Correct spelling, grammar, and typography in ${LANGS[lang].name}.
 Apply these typographic conventions: ${LANGS[lang].extra}
@@ -1472,7 +1470,7 @@ Preserve ALL paragraph breaks.`;
 // ════════════════════════════════
 // EXPORT
 // ════════════════════════════════
-function openExportModal() {
+window.openExportModal = function() {
   const container=document.getElementById('export-options');
   container.innerHTML='';
   const src=originalText||document.getElementById('manuscript-input').value;
@@ -1499,7 +1497,7 @@ function openExportModal() {
   document.getElementById('export-modal').classList.add('show');
 }
 
-function addExportBtn(container,label,fn,isInfo=false){
+window.addExportBtn = function(container,label,fn,isInfo=false){
   const b=document.createElement('button');
   if(isInfo){
     b.style.cssText='width:100%;background:#1a1208;border:1px dashed #3d3020;border-radius:3px;color:#7a6a52;font-size:0.72rem;padding:6px 9px;text-align:left;cursor:default;font-family:inherit;font-style:italic;';
@@ -1514,7 +1512,7 @@ function addExportBtn(container,label,fn,isInfo=false){
 }
 
 // ── Export TXT ──
-function exportTxt(content,filename){
+window.exportTxt = function(content,filename){
   if(!content){notify('Aucun contenu.','error');return;}
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([content],{type:'text/plain;charset=utf-8'}));
@@ -1522,7 +1520,7 @@ function exportTxt(content,filename){
 }
 
 // ── Export HTML ──
-function exportHtml(diff,lang,filename){
+window.exportHtml = function(diff,lang,filename){
   if(!diff){notify('Aucun contenu.','error');return;}
   const langName=LANGS[lang]?LANGS[lang].label:lang;
   const content=`<!DOCTYPE html><html lang="${lang}"><head><meta charset="UTF-8"><title>${langName}</title><style>
@@ -1539,7 +1537,7 @@ h1{font-size:1rem;color:#7a6a52;border-bottom:1px solid #c8b99a;padding-bottom:8
 }
 
 // ── Export DOCX ──
-async function exportDocx(cleanText, diffHtml, lang, filename, mode, footnotes) {
+window.exportDocx = async function(cleanText, diffHtml, lang, filename, mode, footnotes) {
   if(!cleanText && !diffHtml){notify('Aucun contenu à exporter.','error');return;}
   // Résoudre docx depuis window, globalThis ou self selon le contexte navigateur
   const _docx = (typeof docx !== 'undefined' && docx) || (typeof window !== 'undefined' && window.docx) || (typeof globalThis !== 'undefined' && globalThis.docx);
@@ -1598,7 +1596,7 @@ async function exportDocx(cleanText, diffHtml, lang, filename, mode, footnotes) 
 }
 
 // Découpe un conteneur HTML en blocs de niveau paragraphe
-function collectHtmlBlocks(container) {
+window.collectHtmlBlocks = function(container) {
   const blocks = [];
   // Cas 1 : le HTML contient des balises <p>
   const pTags = container.querySelectorAll('p');
@@ -1624,7 +1622,7 @@ function collectHtmlBlocks(container) {
 
 
 // Sépare le corps du texte et les notes depuis la réponse de l'IA
-function extractFootnotesFromText(text) {
+window.extractFootnotesFromText = function(text) {
   const sep='---NOTES DE BAS DE PAGE---';
   const idx=text.indexOf(sep);
   if(idx===-1) return {bodyText:text, parsedFootnotes:{}};
@@ -1640,7 +1638,7 @@ function extractFootnotesFromText(text) {
 }
 
 // Convertit un paragraphe HTML diff en TextRun[] Word (avec footnotes)
-function parseDiffToRuns(html, footnotes={}) {
+window.parseDiffToRuns = function(html, footnotes={}) {
   const _d = (typeof docx!=='undefined'&&docx)||window.docx||globalThis.docx;
   const { TextRun, FootnoteReferenceRun } = _d;
   const runs = [];
@@ -1687,7 +1685,7 @@ function parseDiffToRuns(html, footnotes={}) {
 }
 
 // Convertit du texte avec **gras**, *italique*, ***gras-italique***, [FN:N] en TextRun[]
-function parseTextToRuns(text, footnotes={}) {
+window.parseTextToRuns = function(text, footnotes={}) {
   const _d = (typeof docx!=='undefined'&&docx)||window.docx||globalThis.docx;
   const { TextRun, FootnoteReferenceRun } = _d;
   const runs = [];
@@ -1708,7 +1706,7 @@ function parseTextToRuns(text, footnotes={}) {
   return runs.length>0 ? runs : [new TextRun({text})];
 }
 
-function closeExportModal(){document.getElementById('export-modal').classList.remove('show');}
+window.closeExportModal = function(){document.getElementById('export-modal').classList.remove('show');}
 
 // Exposer toutes les fonctions sur window pour Safari
 window.loadFile = loadFile;
@@ -1727,28 +1725,6 @@ window.selectSourceLang = selectSourceLang;
 window.toggleTargetLang = toggleTargetLang;
 window.toggleKey = toggleKey;
 window.corrigerTraduction = corrigerTraduction;
-
-// Exposer sur window
-var fns = [
-  'loadFile','clearInput','updateCount','lancerAction','switchTab',
-  'toggleDiff','openExportModal','closeExportModal','exportDocx',
-  'exportTxt','exportHtml','setMode','selectSourceLang','toggleTargetLang',
-  'toggleKey','corrigerTraduction','renderPanel','createResultTab',
-  'createResultPanel','notify','showProgress','hideProgress',
-  'lancerCorrection','lancerTraduction','toggleDiff','renderTypoRules',
-  'buildCorrectPrompt','buildTranslatePrompt','callClaude','splitChunks',
-  'normaliserEspacesFR','parseDiffToRuns','parseTextToRuns',
-  'collectHtmlBlocks','extractFootnotesFromText','exportDocx',
-  'corrigerTraductionAuto','buildCorrectAutoPrompt','sleep',
-  'loadJSZip','odtToHtml','htmlToMarkedText','markersToHtml',
-  'escapeHtml','extractDocxFootnotes','extractDocxRunText',
-  'ensureMammoth','openExportModal','addExportBtn','splitTextBlocks',
-  'getTypoRulesText','renderTypoRules','syncTargetGrid','selectLang'
-];
-fns.forEach(function(name) {
-  try { if(typeof eval(name) !== 'undefined') window[name] = eval(name); } catch(e) {}
-});
-})();
 </script>
 </body>
 </html>
