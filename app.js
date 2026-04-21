@@ -2,7 +2,7 @@
 // ════════════════════════════════
 // CONFIGURATION DES LANGUES
 // ════════════════════════════════
-window.LANGS =  = {
+window.LANGS = {
   fr: { label: '🇫🇷 Français', name: 'français', nameEn: 'French',
     rules: [
       { id:'guillemets', label:'Guillemets', type:'select', options:[{value:'francais',label:'« … »'},{value:'anglais',label:'" … "'}]},
@@ -86,13 +86,13 @@ window.LANGS =  = {
 // ════════════════════════════════
 // ÉTAT GLOBAL
 // ════════════════════════════════
-window.currentMode =  = 'correct';
-window.sourceLang =  = 'fr';
-window.targetLangs =  = [];
-window.results =  = {}; // { panelId: { type:'correct'|'translate', lang, clean, diff, diffMode, stats, footnotes } }
-window.originalText =  = '';
-window.richInputHtml =  = ''; // HTML enrichi conservant gras/italique du fichier source
-window.inputFootnotes =  = {}; // { 1: "texte de la note", 2: "..." } — notes de bas de page du fichier source
+window.currentMode = 'correct';
+window.sourceLang = 'fr';
+window.targetLangs = [];
+window.results = {}; // { panelId: { type:'correct'|'translate', lang, clean, diff, diffMode, stats, footnotes } }
+window.originalText = '';
+window.richInputHtml = ''; // HTML enrichi conservant gras/italique du fichier source
+window.inputFootnotes = {}; // { 1: "texte de la note", 2: "..." } — notes de bas de page du fichier source
 
 // ════════════════════════════════
 // INIT
@@ -749,13 +749,13 @@ window.lancerAction = async function() {
 // Espace fine insécable (U+202F) — devant : ; ! ? % et à l'intérieur des guillemets « »
 // Espace insécable (U+00A0)       — cas particuliers
 // Apostrophe typographique (U+2019) — remplace l'apostrophe droite
-window.NNBSP =  = '\u202F'; // espace fine insécable
-window.NBSP =   = '\u00A0'; // espace insécable
-window.APOS =   = '\u2019'; // apostrophe typographique '
+window.NNBSP = '\u202F'; // espace fine insécable
+window.NBSP = '\u00A0'; // espace insécable
+window.APOS = '\u2019'; // apostrophe typographique '
 
 // Locutions françaises composées de tirets — formes correctes
 // Clé : regex de la forme incorrecte, Valeur : forme correcte
-window.LOCUTIONS_TIRETS =  = [
+window.LOCUTIONS_TIRETS = [
   // c'est-à-dire et variantes (apostrophe droite ou manquante, tirets manquants)
   [/c[''\u2019]?[ ]?est[ -]?à[ -]?dire/gi,        `c${APOS}est-à-dire`],
   [/c\s+est\s+a\s+dire/gi,                          `c${APOS}est-à-dire`],
@@ -794,7 +794,7 @@ window.LOCUTIONS_TIRETS =  = [
 ];
 
 // Mots avec ligature œ — liste fermée et sans ambiguïté
-window.OE_LIGATURES =  = [
+window.OE_LIGATURES = [
   [/\bcoeur\b/gi, 'cœur'], [/\bcoeurs\b/gi, 'cœurs'],
   [/\bsoeur\b/gi, 'sœur'], [/\bsoeurs\b/gi, 'sœurs'],
   [/\boeuvre\b/gi, 'œuvre'], [/\boeuvres\b/gi, 'œuvres'],
@@ -816,7 +816,7 @@ window.OE_LIGATURES =  = [
 
 // Majuscules françaises sans accent → avec accent
 // Liste étendue des mots courants dans un manuscrit français
-window.MAJUSCULES_ACCENT =  = [
+window.MAJUSCULES_ACCENT = [
 
   // ── É (le cas le plus fréquent) ──
   [/\bEcart\b/g,'Écart'],[/\bEcarts\b/g,'Écarts'],
